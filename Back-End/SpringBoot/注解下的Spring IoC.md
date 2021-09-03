@@ -174,3 +174,35 @@ public class Man {
 
 ## 4. 生命周期
 
+有时候为了实现某些特异性的需求，我们需要自定义初始化或销毁 Bean 的过程，这就要求我们对 Bean 的生命周期有所了解。
+
+Bean 的生命周期分为**定义**、**初始化**、**生存期**和**销毁**四个阶段。
+
+![Bean的生命周期](注解下的Spring IoC.assets/image-20210903142555961.png)
+
+Spring Bean 初始化过程中需要具体执行的方法：
+
+![Spring Bean的生命周期函数调用](注解下的Spring IoC.assets/1027015-20190722165455745-357028185.png)
+
+在 Spring Bean `Ready for Use` 之前的起源当然是要调用构造器，所以 Constructor 毋庸置疑是创建 Spring Bean 的第一步
+
+1. 通过 Setter 方法完成依赖注入，SDI （Setter Dependency Injection）
+2. 依赖注入一旦结束， `BeanNameAware.setBeanName()` 会被调用，它设置该 bean 在 Bean Factory 中的名称
+3. 接下来调用 `BeanClassLoaderAware.setBeanClassLoader()`，为 bean 实例**提供类加载器**，所有类都是要通过类加载器加载到上下文的
+4.  `BeanFactoryAware.setBeanFactory()` 会被调用为 bean 实例提供其所拥有的 factory
+
+在实际项目中，我们不可避免的要用到 Spring 容器本身提供的资源，这时候要让 Bean 主动意识到 Spring 容器的存在，才能调用 Spring 所提供的资源，这就是 Spring Aware 。
+
+其实 Spring Aware 是 Spring 设计为**框架内部使用的**，若使用了，用户的 Bean 将会和 Spring 框架耦合，所以用户不应单独使用。
+
+| Aware 子接口                   | 描述                                                         |
+| ------------------------------ | ------------------------------------------------------------ |
+| BeanNameAware                  | 获取容器中 Bean 的名称                                       |
+| BeanFactoryAware               | 获取当前 BeanFactory ，这样可以调用容器的服务                |
+| ApplicationContextAware        | 同上，在BeanFactory 和 ApplicationContext 的区别中已明确说明 |
+| MessageSourceAware             | 获取 Message Source 相关文本信息                             |
+| ApplicationEventPublisherAware | 发布事件                                                     |
+| ResourceLoaderAware            | 获取资源加载器，这样获取外部资源文件                         |
+
+
+
